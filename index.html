@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWASP Defense Grid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-mark">🕸️</span>
+      <span class="brand-text" data-i18n="gameTitle">OWASP Defense Grid</span>
+    </div>
+    <div class="topbar-right">
+      <div class="stage-indicator" id="stageIndicator" hidden>
+        <span id="stageLabelText" data-i18n="stageLabel">Stage</span>
+        <span id="stageNumber">1</span>/4
+      </div>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" class="lang-btn" data-lang="th">TH</button>
+        <button type="button" class="lang-btn" data-lang="en">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-shell">
+
+    <!-- ================= START SCREEN ================= -->
+    <section id="screen-start" class="screen active">
+      <div class="panel start-panel">
+        <h1 class="game-title" data-i18n="gameTitle">OWASP Defense Grid</h1>
+        <p class="game-subtitle" data-i18n="gameSubtitle">
+          Analyze data flow, output context, user intent, and authorization for the Student
+          Project Portal
+        </p>
+        <p class="start-prompt" data-i18n="startPrompt">Enter your name and student ID to begin</p>
+        <form id="startForm" class="start-form">
+          <label class="field">
+            <span data-i18n="nameLabel">Full name</span>
+            <input type="text" id="playerName" required autocomplete="off">
+          </label>
+          <label class="field">
+            <span data-i18n="idLabel">Student ID</span>
+            <input type="text" id="playerId" required autocomplete="off">
+          </label>
+          <button type="submit" class="btn btn-primary" data-i18n="startButton">Start the audit</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ================= STAGE SCREEN (shared shell for 4 stages) ================= -->
+    <section id="screen-stage" class="screen">
+      <div class="panel stage-panel">
+
+        <div class="urgency-meter" id="urgencyMeter">
+          <div class="urgency-fill" id="urgencyFill"></div>
+        </div>
+        <div class="timer-row">
+          <span data-i18n="timeLeft">Time left</span>
+          <span id="timeLeftValue" class="mono">45s</span>
+        </div>
+
+        <h2 class="stage-name" id="stageName">Stage 1: Injection</h2>
+        <div class="item-progress" id="itemProgress"></div>
+
+        <article class="scenario-card" id="scenarioCard">
+          <h3 id="itemTitle" class="item-title"></h3>
+          <p id="itemScenario" class="item-scenario"></p>
+        </article>
+
+        <div id="answerArea" class="answer-area"></div>
+
+        <div class="feedback-box" id="feedbackBox" hidden>
+          <p class="feedback-headline" id="feedbackHeadline"></p>
+          <p class="feedback-explanation" id="feedbackExplanation"></p>
+        </div>
+
+        <div class="stage-actions">
+          <button type="button" class="btn btn-primary" id="submitBtn" data-i18n="submitButton">Submit</button>
+          <button type="button" class="btn btn-primary" id="nextBtn" hidden>Next</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= RESULTS SCREEN ================= -->
+    <section id="screen-results" class="screen">
+      <div class="panel results-panel">
+        <h2 data-i18n="resultsTitle">Grid audit summary</h2>
+        <div class="rank-card">
+          <span id="rankBadge" class="rank-badge">🕸️</span>
+          <div>
+            <p id="rankTitle" class="rank-title"></p>
+            <p id="rankDescription" class="rank-description"></p>
+          </div>
+        </div>
+        <div class="accuracy-row">
+          <span data-i18n="overallAccuracy">Overall accuracy</span>
+          <span id="overallAccuracyValue" class="mono">0%</span>
+        </div>
+        <div class="stage-breakdown" id="stageBreakdown"></div>
+        <div class="results-actions">
+          <button type="button" class="btn" id="playAgainBtn" data-i18n="playAgainButton">Play again</button>
+          <button type="button" class="btn btn-primary" id="certBtn" data-i18n="generateCertificateButton">Generate certificate</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= CERTIFICATE MODAL ================= -->
+  <div id="certModal" class="modal-backdrop" hidden>
+    <div class="modal certificate">
+      <h2 data-i18n="resultsTitle">Grid audit summary</h2>
+      <div class="cert-row"><span data-i18n="certName">Name</span><strong id="certName"></strong></div>
+      <div class="cert-row"><span data-i18n="certId">Student ID</span><strong id="certId"></strong></div>
+      <div class="cert-row"><span data-i18n="certDate">Date</span><strong id="certDate"></strong></div>
+      <div class="cert-row"><span id="certRankLabel"></span><strong id="certRankValue"></strong></div>
+      <div class="cert-row"><span data-i18n="overallAccuracy">Overall accuracy</span><strong id="certAccuracy"></strong></div>
+      <div class="cert-row"><span data-i18n="certSignature">Verification signature</span><strong id="certSignature" class="mono"></strong></div>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="certCloseBtn" data-i18n="closeButton">Close</button>
+        <button type="button" class="btn btn-primary" id="certPrintBtn" data-i18n="printButton">Print / Save as PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="game-core.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
