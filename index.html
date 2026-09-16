@@ -56,14 +56,6 @@
     <section id="screen-stage" class="screen">
       <div class="panel stage-panel">
 
-        <div class="urgency-meter" id="urgencyMeter">
-          <div class="urgency-fill" id="urgencyFill"></div>
-        </div>
-        <div class="timer-row">
-          <span data-i18n="timeLeft">Time left</span>
-          <span id="timeLeftValue" class="mono">45s</span>
-        </div>
-
         <h2 class="stage-name" id="stageName">Stage 1: Injection</h2>
         <div class="item-progress" id="itemProgress"></div>
 
@@ -104,26 +96,27 @@
         <div class="stage-breakdown" id="stageBreakdown"></div>
         <div class="results-actions">
           <button type="button" class="btn" id="playAgainBtn" data-i18n="playAgainButton">Play again</button>
-          <button type="button" class="btn btn-primary" id="certBtn" data-i18n="generateCertificateButton">Generate certificate</button>
+          <button type="button" class="btn btn-primary" id="certBtn" data-i18n="generateCertificateButton">View local practice summary</button>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- ================= CERTIFICATE MODAL ================= -->
+  <!-- ================= LOCAL PRACTICE SUMMARY MODAL ================= -->
   <div id="certModal" class="modal-backdrop" hidden>
     <div class="modal certificate">
-      <h2 data-i18n="resultsTitle">Grid audit summary</h2>
+      <h2 data-i18n="localSummaryTitle">Local practice summary</h2>
       <div class="cert-row"><span data-i18n="certName">Name</span><strong id="certName"></strong></div>
       <div class="cert-row"><span data-i18n="certId">Student ID</span><strong id="certId"></strong></div>
       <div class="cert-row"><span data-i18n="certDate">Date</span><strong id="certDate"></strong></div>
       <div class="cert-row"><span id="certRankLabel"></span><strong id="certRankValue"></strong></div>
       <div class="cert-row"><span data-i18n="overallAccuracy">Overall accuracy</span><strong id="certAccuracy"></strong></div>
-      <div class="cert-row"><span data-i18n="certSignature">Verification signature</span><strong id="certSignature" class="mono"></strong></div>
+      <div class="cert-row"><span data-i18n="certSignature">Summary scope</span><strong id="certSignature" class="mono"></strong></div>
+      <p data-i18n="localSummaryBoundary">Browser-only and self-entered; not evidence of identity, completion, competency, or instructor verification.</p>
       <div class="modal-actions">
         <button type="button" class="btn" id="certCloseBtn" data-i18n="closeButton">Close</button>
-        <button type="button" class="btn btn-primary" id="certPrintBtn" data-i18n="printButton">Print / Save as PDF</button>
+        <button type="button" class="btn btn-primary" id="certPrintBtn" data-i18n="printButton">Print / Save practice summary</button>
       </div>
     </div>
   </div>

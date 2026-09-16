@@ -1,5 +1,5 @@
 /**
- * OWASP Defense Grid - App controller (DOM rendering, state machine, timer).
+ * OWASP Defense Grid - App controller (DOM rendering and state machine).
  * Depends on i18n.js and game-core.js being loaded first.
  *
  * Mechanics dispatch per item (item.kind), mirroring vault-signature-bench/app.js.
@@ -7,8 +7,6 @@
 
 (function () {
   "use strict";
-
-  const MAX_TIME = 45;
 
   const STAGES = [
     { key: "s1", nameKey: "stage1Name", items: STAGE1_INJECTION },
@@ -22,8 +20,6 @@
     player: { name: "", id: "" },
     stageIndex: 0,
     itemIndex: 0,
-    timeLeft: MAX_TIME,
-    timerHandle: null,
     submitted: false,
     stageResults: { s1: [], s2: [], s3: [], s4: [] },
   };
@@ -56,39 +52,6 @@
   function showScreen(id) {
     document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
     el(id).classList.add("active");
-  }
-
-  // -------------------------------------------------------------------
-  // Timer
-  // -------------------------------------------------------------------
-
-  function startTimer() {
-    stopTimer();
-    state.timeLeft = MAX_TIME;
-    updateTimerUI();
-    state.timerHandle = setInterval(() => {
-      state.timeLeft -= 1;
-      updateTimerUI();
-      if (state.timeLeft <= 0) {
-        stopTimer();
-        if (!state.submitted) handleSubmit(true);
-      }
-    }, 1000);
-  }
-
-  function stopTimer() {
-    if (state.timerHandle) {
-      clearInterval(state.timerHandle);
-      state.timerHandle = null;
-    }
-  }
-
-  function updateTimerUI() {
-    el("timeLeftValue").textContent = Math.max(0, state.timeLeft) + "s";
-    const ratio = Math.max(0, state.timeLeft / MAX_TIME);
-    const fill = el("urgencyFill");
-    fill.style.width = ratio * 100 + "%";
-    fill.classList.toggle("urgency-critical", ratio < 0.3);
   }
 
   // -------------------------------------------------------------------
@@ -327,8 +290,6 @@
     el("feedbackBox").hidden = true;
     el("submitBtn").hidden = false;
     el("nextBtn").hidden = true;
-
-    startTimer();
   }
 
   function isLastItemOfStage() {
@@ -339,18 +300,16 @@
     return state.stageIndex >= STAGES.length - 1;
   }
 
-  function handleSubmit(timedOut) {
+  function handleSubmit() {
     if (state.submitted) return;
-    stopTimer();
     state.submitted = true;
 
     const stage = currentStage();
     const item = currentItem();
     const answer = COLLECTORS[item.kind](item);
 
-    if (!timedOut && !answer.complete) {
+    if (!answer.complete) {
       state.submitted = false;
-      startTimer();
       showIncompleteHint();
       return;
     }
@@ -417,7 +376,6 @@
   }
 
   function showResults() {
-    stopTimer();
     const stageAccuracies = {
       s1: average(state.stageResults.s1),
       s2: average(state.stageResults.s2),
@@ -450,30 +408,24 @@
     showScreen("screen-results");
   }
 
-  function simpleHash(str) {
-    let h1 = 0xdeadbeef;
-    let h2 = 0x41c6ce57;
-    for (let i = 0; i < str.length; i++) {
-      const ch = str.charCodeAt(i);
-      h1 = Math.imul(h1 ^ ch, 2654435761);
-      h2 = Math.imul(h2 ^ ch, 1597334677);
-    }
-    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-    return (h1 >>> 0).toString(16) + (h2 >>> 0).toString(16);
+  function formatLocalDate(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 
   function openCertificate() {
-    const dateStr = new Date().toISOString().slice(0, 10);
+    const dateStr = formatLocalDate();
     el("certName").textContent = state.player.name;
     el("certId").textContent = state.player.id;
     el("certDate").textContent = dateStr;
-    el("certRankLabel").textContent = state.lang === "th" ? "ตำแหน่ง" : "Rank";
+    el("certRankLabel").textContent = state.lang === "th" ? "ช่วงผลการฝึก" : "Practice band";
     el("certRankValue").textContent = bi(state.lastOutcome.title, state.lang);
     el("certAccuracy").textContent = Math.round(state.lastOutcome.accuracy) + "%";
-    el("certSignature").textContent = simpleHash(
-      `${state.player.name}|${state.player.id}|${Math.round(state.lastOutcome.accuracy)}|${dateStr}`
-    );
+    el("certSignature").textContent = state.lang === "th"
+      ? "สร้างในเบราว์เซอร์นี้เท่านั้น — ไม่ใช่ระเบียนทางการหรือระเบียนที่ตรวจสอบได้"
+      : "Generated in this browser only — not an official or verifiable record.";
     el("certModal").hidden = false;
   }
 
@@ -515,7 +467,7 @@
       renderItem();
     });
 
-    el("submitBtn").addEventListener("click", () => handleSubmit(false));
+    el("submitBtn").addEventListener("click", handleSubmit);
     el("nextBtn").addEventListener("click", goToNext);
     el("playAgainBtn").addEventListener("click", resetGame);
     el("certBtn").addEventListener("click", openCertificate);

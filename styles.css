@@ -142,30 +142,6 @@ body {
 
 /* ---------------- Stage screen ---------------- */
 
-.urgency-meter {
-  height: 6px;
-  background: var(--panel-raised);
-  border-radius: 3px;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-
-.urgency-fill {
-  height: 100%;
-  background: var(--crimson);
-  transition: width 1s linear, background 0.3s;
-}
-
-.urgency-fill.urgency-critical { background: #c0392b; }
-
-.timer-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 18px;
-}
-
 .stage-name {
   font-family: "JetBrains Mono", monospace;
   font-size: 16px;

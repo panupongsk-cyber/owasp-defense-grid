@@ -353,16 +353,6 @@ const STAGE4_ACCESS_CONTROL = [
 // Scoring
 // ---------------------------------------------------------------------------
 
-/** Same speed-bonus formula used across the other 305331 games. */
-function calculateScore(basePoints, timeElapsedSeconds, maxTimeSeconds = 45) {
-  if (timeElapsedSeconds >= maxTimeSeconds) {
-    return Math.floor(basePoints * 0.5);
-  }
-  const speedRatio = (maxTimeSeconds - timeElapsedSeconds) / maxTimeSeconds;
-  const speedBonus = Math.floor(basePoints * 0.5 * speedRatio);
-  return basePoints + speedBonus;
-}
-
 function scoreLayeredDefense(item, answer) {
   const identifyOption = item.identifyOptions.find((o) => o.id === answer.identifyId);
   const identifyRatio = identifyOption && identifyOption.correct ? 1 : 0;
@@ -416,38 +406,38 @@ function evaluateLearningOutcome(stageAccuracies) {
 
   let rank = {
     badge: "🕸️",
-    title: { th: "ผู้ฝึกงานตรวจสอบเว็บ", en: "Web Defense Trainee" },
+    title: { th: "ช่วงผลการฝึก: ต่ำกว่า 50%", en: "Practice band: below 50%" },
     description: {
-      th: "เริ่มต้นได้ดี ลองเล่นซ้ำเพื่อฝึกแยก injection, XSS, CSRF และ broken access control ให้คล่องขึ้น",
-      en: "A solid start — replay to get faster at separating injection, XSS, CSRF, and broken access control.",
+      th: "ผลนี้สะท้อนความถูกต้องในชุดสถานการณ์ฝึกนี้เท่านั้น ลองเล่นซ้ำเพื่อฝึกแยก injection, XSS, CSRF และ broken access control ให้ชัดเจนขึ้น",
+      en: "This result reflects accuracy in this local scenario set only; replay to practise distinguishing injection, XSS, CSRF, and broken access control.",
     },
   };
 
   if (overallAccuracy >= 90) {
     rank = {
       badge: "🛡️",
-      title: { th: "หัวหน้าฝ่ายป้องกันเว็บแอปพลิเคชัน", en: "Chief Web Application Defense Officer" },
+      title: { th: "ช่วงผลการฝึก: 90–100%", en: "Practice band: 90–100%" },
       description: {
-        th: "วิเคราะห์ data flow, output context, เจตนาผู้ใช้ และ authorization ได้แม่นยำครบทุกมิติ",
-        en: "Analyzes data flow, output context, user intent, and authorization accurately across every dimension.",
+        th: "ความถูกต้องสูงในชุดสถานการณ์ฝึกนี้ โดยยังไม่ใช่การรับรองความสามารถในการปฏิบัติงานจริง",
+        en: "High accuracy in this local scenario set; it does not certify operational competence.",
       },
     };
   } else if (overallAccuracy >= 75) {
     rank = {
       badge: "🔍",
-      title: { th: "นักวิเคราะห์เว็บอาวุโส", en: "Senior Web Security Analyst" },
+      title: { th: "ช่วงผลการฝึก: 75–89%", en: "Practice band: 75–89%" },
       description: {
-        th: "จับประเด็นได้ถูกต้องเป็นส่วนใหญ่ ยังพลาดบ้างในรายละเอียดของ defense-in-depth หรือ policy condition",
-        en: "Catches the right issue most of the time, with a few slips on defense-in-depth detail or the exact policy condition.",
+        th: "ความถูกต้องดีในชุดสถานการณ์ฝึกนี้ ลองทบทวน defense in depth และ policy condition",
+        en: "Good accuracy in this local scenario set; review defense in depth and the relevant policy conditions.",
       },
     };
   } else if (overallAccuracy >= 50) {
     rank = {
       badge: "🧩",
-      title: { th: "นักวิเคราะห์เว็บ", en: "Web Security Analyst" },
+      title: { th: "ช่วงผลการฝึก: 50–74%", en: "Practice band: 50–74%" },
       description: {
-        th: "เข้าใจหลักการพื้นฐาน แต่ยังสับสนระหว่าง attack class หรือเข้าใจว่า UI ที่ซ่อนไว้คือ authorization",
-        en: "Grasps the basics, but still mixes up attack classes, or mistakes a hidden UI element for authorization.",
+        th: "มีความเข้าใจพื้นฐานในชุดสถานการณ์ฝึกนี้ ลองทบทวน attack class และเหตุที่ UI ที่ซ่อนไว้ไม่ใช่ authorization",
+        en: "Some basic understanding in this local scenario set; review attack classes and why a hidden UI element is not authorization.",
       },
     };
   }
@@ -465,7 +455,6 @@ if (typeof module !== "undefined" && module.exports) {
     STAGE2_XSS_CONTEXT,
     STAGE3_CSRF,
     STAGE4_ACCESS_CONTROL,
-    calculateScore,
     scoreLayeredDefense,
     scoreToolSelect,
     scoreAuthorization,
